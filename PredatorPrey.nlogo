@@ -1,19 +1,15 @@
-breed [predators predator]
-breed [preys prey]
-turtles-own
-[
-  energy
-  mature
-]
-patches-own
-[
-  grow-left
-]
+breed [ predators predator ]
+breed [ preys prey ]
+
+turtles-own [ energy mature ]
+patches-own [ grow-left ]
+
 to setup
   clear-all
-  reset-ticks
+
   create-preys prey-population
   create-predators predator-population
+
   ask preys
   [
     set color green
@@ -22,6 +18,7 @@ to setup
     set mature random maturity
     setxy random-xcor random-ycor
   ]
+
   ask predators
   [
     set color red
@@ -35,6 +32,8 @@ to setup
     set pcolor blue
     set grow-left 0
   ]
+
+  reset-ticks
 end
 
 to-report coin-flip?
@@ -48,13 +47,9 @@ end
 to go
   ask preys
   [
-    ifelse coin-flip?
-    [
-      right random max-turn
-    ]
-    [
-      left random max-turn
-    ]
+    ifelse coin-flip? [ right random max-turn ]
+    [ left random max-turn ]
+
     forward random max-step
 
     if pcolor = blue
@@ -63,8 +58,10 @@ to go
       set grow-left (growth-time)
       set energy (energy + eat-energy)
     ]
+
     set energy (energy - step-energy)
     set mature (mature + 1)
+
     if mature >= maturity and mature mod 5 = 0 and randomize < prey-reproduce-threshold and count preys <= 100
     [
       set energy (energy / 2)
@@ -76,27 +73,25 @@ to go
         set mature 0
       ]
     ]
+
     if energy = 0 [ die ]
     if mature >= maturity * 2 [ die ]
   ]
+
   ask predators
   [
-    ifelse coin-flip?
-    [
-      right random max-turn
-    ]
-    [
-      left random max-turn
-    ]
+    ifelse coin-flip? [ right random max-turn ]
+    [ left random max-turn ]
+
     forward random max-step
-    if one-of preys-here != nobody [ ; not sure
-      ask one-of preys-here
-      [
-        die
-      ]
+
+    if one-of preys-here != nobody [
+      ask one-of preys-here [ die ]
       set energy (energy + eat-energy)
     ]
+
     set energy (energy - step-energy)
+
     if mature >= maturity and mature mod 5 = 0 and randomize < predator-reproduce-threshold
     [
       set energy (energy / 2)
@@ -108,27 +103,23 @@ to go
         set mature 0
       ]
     ]
+
     if energy = 0 [ die ]
     if mature >= maturity * 2 [ die ]
   ]
+
   ask patches
   [
-    if pcolor = black
-    [
-      set grow-left (grow-left - 1)
-    ]
-    if grow-left = 0
-    [
-      set pcolor blue
-    ]
+    if pcolor = black [ set grow-left (grow-left - 1) ]
+    if grow-left = 0 [ set pcolor blue ]
   ]
   tick
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-260
+266
 10
-801
+807
 552
 -1
 -1
@@ -225,17 +216,17 @@ prey-population
 prey-population
 0
 100
-68.0
+70.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-16
-252
-188
-285
+15
+246
+187
+279
 growth-time
 growth-time
 0
@@ -248,9 +239,9 @@ HORIZONTAL
 
 SLIDER
 14
-295
+289
 186
-328
+322
 predator-energy
 predator-energy
 0
@@ -263,9 +254,9 @@ HORIZONTAL
 
 SLIDER
 13
-335
+329
 185
-368
+362
 prey-energy
 prey-energy
 0
@@ -277,45 +268,45 @@ NIL
 HORIZONTAL
 
 SLIDER
-18
-205
-190
-238
+15
+203
+187
+236
 predator-population
 predator-population
 0
 100
-39.0
+40.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-11
-380
-254
-413
+13
+367
+256
+400
 predator-reproduce-threshold
 predator-reproduce-threshold
 0
 100
-45.0
+40.0
 1.0
 1
 %
 HORIZONTAL
 
 SLIDER
-10
-421
-230
-454
+13
+409
+233
+442
 prey-reproduce-threshold
 prey-reproduce-threshold
 0
 100
-55.0
+60.0
 1
 1
 %
@@ -360,17 +351,17 @@ maturity
 maturity
 0
 100
-27.0
+25.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-86
-459
-143
-504
+14
+449
+71
+494
 prey
 count preys
 0
@@ -378,10 +369,10 @@ count preys
 11
 
 MONITOR
-13
-459
 80
-504
+449
+147
+494
 predators
 count predators
 0
@@ -389,10 +380,10 @@ count predators
 11
 
 PLOT
-15
-513
-215
-663
+14
+503
+214
+653
 population
 time
 pop.
@@ -408,10 +399,10 @@ PENS
 "predator" 1.0 0 -2674135 true "" "plot count predators"
 
 PLOT
-13
-668
-213
-818
+15
+662
+215
+812
 feeds
 feed
 time
@@ -424,6 +415,17 @@ true
 "" ""
 PENS
 "feeds" 1.0 0 -14070903 true "" "plot count patches with [pcolor = blue]"
+
+MONITOR
+157
+449
+214
+494
+food
+count patches with [pcolor = blue]
+0
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
