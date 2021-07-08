@@ -1,82 +1,126 @@
-breed [ sharks shark ]
-breed [ fishes fish ]
+breed [ predators predator ]
+breed [ preys prey ]
+breed [ plants plant ]
+
 turtles-own [ energy ]
+plants-own [ growth-time ]
 
 to setup
   clear-all
   reset-ticks
 
-  ask patches [
-    ifelse random-float 100.0 < pct-plants
-      [ set pcolor green ]
-      [ set pcolor blue ]
-  ]
-
-  create-sharks num-sharks [
-    set shape "fish 2"
-    set color white
-    set energy 100
-    setxy random-xcor random-ycor
-  ]
-
-  create-fishes num-fishes [
-    set shape "fish"
+  create-preys num-preys [
     set color pink
+    set shape "fish"
     set energy 100
     setxy random-xcor random-ycor
+  ]
+
+  create-predators num-predators [
+    set color red
+    set shape "fish 2"
+    set energy 100
+    setxy random-xcor random-ycor
+  ]
+
+  create-plants num-plants [
+    set color green
+    set shape "plant"
+    set growth-time food-growth
+    setxy random-xcor random-ycor
+  ]
+
+  ask patches [
+    set pcolor blue
   ]
 end
 
 to go
+  ask preys [
+    ifelse coin-flip?
+      [ right random max-move ]
+      [ left random max-move ]
+    forward random max-move
 
+    ifelse one-of plants-here != nobody
+      [ ask one-of plants-here [ die ]
+        set energy (energy + 5) ]
+      [ set energy (energy - 1)
+        if randomize < reproduction-chance [
+          set energy (energy / 2)
+          hatch-preys 1 [
+            set color pink
+            set shape "fish"
+            set energy (energy / 2)
+            setxy random-xcor random-ycor
+          ]
+        ]
+      ]
+
+    if energy < 0 [ die ]
+  ]
+
+  ask predators [
+    ifelse coin-flip?
+      [ right random max-move ]
+      [ left random max-move ]
+    forward random max-move
+
+    ifelse one-of preys-here != nobody
+      [ ask one-of preys-here [ die ]
+        set energy (energy + 1)
+        hatch-plants 1 [
+          set color green
+          set shape "plant"
+          set growth-time food-growth
+          setxy random-xcor random-ycor
+        ] ]
+      [ set energy (energy - 1)
+        if randomize < reproduction-chance [
+          set energy (energy / 2)
+          hatch-predators 1 [
+            set color red
+            set shape "fish 2"
+            set energy (energy / 2)
+            setxy random-xcor random-ycor
+          ]
+        ]
+      ]
+
+    if energy < 0 [ die ]
+  ]
+
+  ask plants [
+    set growth-time (growth-time - 1)
+
+    if growth-time < 0 [
+      if randomize < reproduction-chance [
+        hatch-plants 1 [
+          set color green
+          set shape "plant"
+          set growth-time food-growth
+          setxy random-xcor random-ycor
+        ]
+      ]
+    ]
+  ]
+
+  tick
 end
 
-;turtles-own [food-eaten]
-;
-;to setup
-;  clear-all
-;  reset-ticks
-;  create-turtles population
-;
-;  ask turtles
-;  [
-;    set shape "bug"
-;    set size 3
-;    set color red
-;    set food-eaten 0
-;  ]
-;
-;  ask patches
-;  [
-;    set pcolor green
-;  ]
-;end
-;
-;to go
-;  ask turtles
-;  [
-;    ifelse coin-flip? [right random max-turn] [left random max-turn]
-;    forward random max-step
-;
-;    if pcolor = green
-;    [
-;      set pcolor black
-;      set food-eaten (food-eaten + 1)
-;      set label food-eaten
-;    ]
-;  ]
-;  tick
-;end
-;
-;to-report coin-flip?
-;  report random 2 = 0
-;end
+to-report coin-flip?
+  report random 2 = 0
+end
+
+to-report randomize
+  report random 100
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-235
-20
-672
-458
+266
+10
+807
+552
 -1
 -1
 13.0
@@ -89,50 +133,20 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-20
+20
+-20
+20
 0
 0
 1
 ticks
 30.0
 
-SLIDER
-54
-102
-226
-135
-num-sharks
-num-sharks
-1
-50
-25.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-54
-145
-226
-178
-num-fishes
-num-fishes
-1
-100
-50.0
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
-160
+119
 20
-226
+183
 53
 NIL
 setup
@@ -147,11 +161,11 @@ NIL
 1
 
 BUTTON
-160
-60
-226
-93
-NIL
+193
+20
+256
+53
+go
 go
 T
 1
@@ -161,19 +175,179 @@ NIL
 NIL
 NIL
 NIL
-1
+0
 
 SLIDER
-54
-186
-226
-219
-pct-plants
-pct-plants
-1.0
+84
+190
+256
+223
+max-move
+max-move
+1
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+84
+62
+256
+95
+num-preys
+num-preys
+0
+100
+100.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+84
+316
+256
+349
+food-growth
+food-growth
+0
+100
+100.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+84
+105
+256
+138
+num-predators
+num-predators
+0
+100
+100.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+84
+232
+256
+265
+reproduction-chance
+reproduction-chance
+0
+100
+50.0
+1
+1
+%
+HORIZONTAL
+
+MONITOR
+817
+10
+874
+55
+prey
+count preys
+0
+1
+11
+
+MONITOR
+883
+10
+950
+55
+predators
+count predators
+0
+1
+11
+
+PLOT
+817
+64
+1017
+214
+population
+time
+pop.
+0.0
+100.0
+0.0
+100.0
+true
+true
+"" ""
+PENS
+"prey" 1.0 0 -2064490 true "" "plot count preys"
+"predator" 1.0 0 -2674135 true "" "plot count predators"
+
+PLOT
+818
+223
+1018
+373
+feeds
+feed
+time
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"feeds" 1.0 0 -10899396 true "" "plot count plants"
+
+MONITOR
+960
+10
+1017
+55
+food
+count plants
+0
+1
+11
+
+SLIDER
+84
+274
+256
+307
+reproduction-interval
+reproduction-interval
+1
+50
 25.0
-12.5
-0.1
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+84
+147
+256
+180
+num-plants
+num-plants
+1
+100
+50.0
+1
 1
 NIL
 HORIZONTAL
@@ -424,19 +598,6 @@ Polygon -7500403 true true 165 180 165 210 225 180 255 120 210 135
 Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
 Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
 Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
-
-shark
-false
-0
-Polygon -7500403 true true 283 153 288 149 271 146 301 145 300 138 247 119 190 107 104 117 54 133 39 134 10 99 9 112 19 142 9 175 10 185 40 158 69 154 64 164 80 161 86 156 132 160 209 164
-Polygon -7500403 true true 199 161 152 166 137 164 169 154
-Polygon -7500403 true true 188 108 172 83 160 74 156 76 159 97 153 112
-Circle -16777216 true false 256 129 12
-Line -16777216 false 222 134 222 150
-Line -16777216 false 217 134 217 150
-Line -16777216 false 212 134 212 150
-Polygon -7500403 true true 78 125 62 118 63 130
-Polygon -7500403 true true 121 157 105 161 101 156 106 152
 
 sheep
 false
