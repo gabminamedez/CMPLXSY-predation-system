@@ -65,7 +65,7 @@ to go
     ]
     set energy (energy - step-energy)
     set mature (mature + 1)
-    if mature >= maturity and mature mod 5 = 0 and randomize < prey-reproduce-threshold
+    if mature >= maturity and randomize < prey-reproduce-threshold
     [
       set energy (energy / 2)
       hatch-preys 1 [
@@ -97,7 +97,7 @@ to go
       set energy (energy + eat-energy)
     ]
     set energy (energy - step-energy)
-    if mature >= maturity and mature mod 5 = 0 and randomize < predator-reproduce-threshold
+    if mature >= maturity and mature mod 10 = 0 a randomize < predator-reproduce-threshold
     [
       set energy (energy / 2)
       hatch-predators 1 [
@@ -225,7 +225,7 @@ prey-population
 prey-population
 0
 100
-25.0
+20.0
 1
 1
 NIL
@@ -285,7 +285,7 @@ predator-population
 predator-population
 0
 100
-43.0
+44.0
 1
 1
 NIL
