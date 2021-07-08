@@ -62,7 +62,7 @@ to go
     set energy (energy - step-energy)
     set mature (mature + 1)
 
-    if mature >= maturity and mature mod 5 = 0 and randomize < prey-reproduce-threshold and count preys <= 100
+    if mature >= maturity and mature mod 5 = 0 and randomize < prey-reproduce-threshold
     [
       set energy (energy / 2)
       hatch-preys 1 [
