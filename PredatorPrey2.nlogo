@@ -46,9 +46,9 @@ to go
       [ ask one-of plants-here [ die ]
         set energy (energy + 5) ]
       [ set energy (energy - 1)
-        if randomize < reproduction-chance [
+        if randomize < reproduction-chance and ticks mod reproduction-interval = 0 [
           set energy (energy / 2)
-          hatch-preys 1 [
+          hatch-preys 5 [
             set color pink
             set shape "fish"
             set energy (energy / 2)
@@ -76,9 +76,9 @@ to go
           setxy random-xcor random-ycor
         ] ]
       [ set energy (energy - 1)
-        if randomize < reproduction-chance [
-          set energy (energy / 2)
-          hatch-predators 1 [
+        if randomize < reproduction-chance and ticks mod reproduction-interval = 0 [
+          set energy (energy / 4)
+          hatch-predators 5 [
             set color red
             set shape "fish 2"
             set energy (energy / 2)
@@ -94,7 +94,7 @@ to go
     set growth-time (growth-time - 1)
 
     if growth-time < 0 [
-      if randomize < reproduction-chance [
+      if randomize = reproduction-chance and ticks mod reproduction-interval = 0 [
         hatch-plants 1 [
           set color green
           set shape "plant"
@@ -231,7 +231,7 @@ num-predators
 num-predators
 0
 100
-100.0
+50.0
 1
 1
 NIL
@@ -331,7 +331,7 @@ reproduction-interval
 reproduction-interval
 1
 50
-25.0
+10.0
 1
 1
 NIL
@@ -346,7 +346,7 @@ num-plants
 num-plants
 1
 100
-50.0
+100.0
 1
 1
 NIL
