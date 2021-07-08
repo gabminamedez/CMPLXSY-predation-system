@@ -65,7 +65,7 @@ to go
     ]
     set energy (energy - step-energy)
     set mature (mature + 1)
-    if mature >= maturity and mature mod 5 = 0 and randomize < prey-reproduce-threshold
+    if mature >= maturity and mature mod 5 = 0 and randomize < prey-reproduce-threshold and count preys <= 100
     [
       set energy (energy / 2)
       hatch-preys 1 [
@@ -225,7 +225,7 @@ prey-population
 prey-population
 0
 100
-25.0
+68.0
 1
 1
 NIL
@@ -277,15 +277,15 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
+18
 205
-187
+190
 238
 predator-population
 predator-population
 0
 100
-43.0
+39.0
 1
 1
 NIL
@@ -300,7 +300,7 @@ predator-reproduce-threshold
 predator-reproduce-threshold
 0
 100
-90.0
+45.0
 1.0
 1
 %
@@ -315,7 +315,7 @@ prey-reproduce-threshold
 prey-reproduce-threshold
 0
 100
-10.0
+55.0
 1
 1
 %
@@ -330,7 +330,7 @@ step-energy
 step-energy
 0
 100
-20.0
+15.0
 1
 1
 NIL
@@ -345,7 +345,7 @@ eat-energy
 eat-energy
 0
 100
-10.0
+15.0
 1
 1
 NIL
@@ -360,11 +360,70 @@ maturity
 maturity
 0
 100
-20.0
+27.0
 1
 1
 NIL
 HORIZONTAL
+
+MONITOR
+86
+459
+143
+504
+prey
+count preys
+0
+1
+11
+
+MONITOR
+13
+459
+80
+504
+predators
+count predators
+0
+1
+11
+
+PLOT
+15
+513
+215
+663
+population
+time
+pop.
+0.0
+100.0
+0.0
+100.0
+true
+true
+"" ""
+PENS
+"prey" 1.0 0 -13840069 true "" "plot count preys"
+"predator" 1.0 0 -2674135 true "" "plot count predators"
+
+PLOT
+13
+668
+213
+818
+feeds
+feed
+time
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"feeds" 1.0 0 -14070903 true "" "plot count patches with [pcolor = blue]"
 
 @#$#@#$#@
 ## WHAT IS IT?
